@@ -11,11 +11,13 @@ import kotlinx.coroutines.flow.stateIn
 import com.example.movietechnicaltest.core.Result
 import com.example.movietechnicaltest.data.models.movies.MoviesResponse
 import com.example.movietechnicaltest.domain.movies.MoviesRepo
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
+@HiltViewModel
+class MoviesViewModel @Inject constructor(private val repo: MoviesRepo) : ViewModel() {
 
-class MoviesViewModel(private val repo: MoviesRepo) : ViewModel() {
-
-    fun getMovies(): StateFlow<Result<BaseResponse<MoviesResponse>>> = flow{
+    fun getMovies(): StateFlow<Result<BaseResponse<MoviesResponse>>> = flow {
         kotlin.runCatching {
             repo.getMovies()
         }.onSuccess {
@@ -27,7 +29,7 @@ class MoviesViewModel(private val repo: MoviesRepo) : ViewModel() {
 
 }
 
-class MoviesViewModelFactory(private val repo : MoviesRepo): ViewModelProvider.Factory {
+class MoviesViewModelFactory(private val repo: MoviesRepo) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return modelClass.getConstructor(MoviesRepo::class.java).newInstance(repo)
 

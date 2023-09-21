@@ -26,17 +26,16 @@ import com.example.movietechnicaltest.data.rest.RetrofitClient
 import com.example.movietechnicaltest.domain.movies.MoviesRepoImpl
 import com.example.movietechnicaltest.presentation.MoviesViewModelFactory
 import com.example.movietechnicaltest.ui.adapters.MoviesAdapter
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.lifecycle.HiltViewModel
 
+
+@AndroidEntryPoint
 class MoviesFragment : Fragment(R.layout.fragment_movies) {
 
     private lateinit var binding: FragmentMoviesBinding
-    private val viewModel by viewModels<MoviesViewModel> {
-        MoviesViewModelFactory(
-            MoviesRepoImpl(
-                RetrofitClient.webService
-            )
-        )
-    }
+
+    private val viewModel by viewModels<MoviesViewModel>()
     private var moviesList = listOf<MoviesResponse>()
     private var baseMovieList = listOf<MoviesResponse>()
 
@@ -61,11 +60,12 @@ class MoviesFragment : Fragment(R.layout.fragment_movies) {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                if (newText == ""){
+                if (newText == "") {
                     moviesList = baseMovieList
                     setUpMovies()
-                }else{
-                    moviesList = baseMovieList.filter { it.title.contains(newText.toString().uppercase()) }
+                } else {
+                    moviesList =
+                        baseMovieList.filter { it.title.contains(newText.toString().uppercase()) }
                     setUpMovies()
                 }
                 return true
@@ -115,7 +115,7 @@ class MoviesFragment : Fragment(R.layout.fragment_movies) {
     }
 
     private fun setUpMovies() {
-        val adapter = MoviesAdapter(moviesList, onClickItem = {onClickMovie(it)})
+        val adapter = MoviesAdapter(moviesList, onClickItem = { onClickMovie(it) })
         binding.rvMovies.layoutManager = LinearLayoutManager(requireContext())
         binding.rvMovies.adapter = adapter
     }

@@ -1,31 +1,39 @@
 package com.example.movietechnicaltest.di
 
+import android.app.Application
 import com.example.movietechnicaltest.core.Constants
 import com.example.movietechnicaltest.data.rest.WebService
-import com.example.movietechnicaltest.domain.movies.MoviesRepo
 import com.example.movietechnicaltest.domain.movies.MoviesRepoImpl
-import com.example.movietechnicaltest.presentation.MoviesViewModel
-import org.koin.androidx.viewmodel.dsl.viewModel
-import org.koin.dsl.module
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Singleton
 
-val appModule = module {
-    viewModel { provideOrdersViewModel(get()) }
-    single { provideMoviesRepository(get()) }
-    single { provideWebService(get()) }
-}
+@Module
+@InstallIn(SingletonComponent::class)
+object AppModule {
 
-private fun provideOrdersViewModel(repository: MoviesRepoImpl): MoviesViewModel {
-    return MoviesViewModel(repository)
-}
+    @Provides
+    @Singleton
+    fun provideWebService(): WebService {
+        return Retrofit
+            .Builder()
+            .baseUrl(Constants.BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(WebService::class.java)
+    }
 
-private fun provideMoviesRepository(
-    rest: WebService,
-): MoviesRepoImpl {
-    return MoviesRepoImpl(rest)
-}
+    @Provides
+    @Singleton
+    fun provideMoviesRepository(
+        rest: WebService,
+        app: Application
+    ): MoviesRepoImpl {
+        return MoviesRepoImpl(rest, app)
+    }
 
-private fun provideWebService(retrofit: Retrofit): WebService {
-    val client = retrofit.newBuilder().baseUrl(Constants.BASE_URL).build()
-    return client.create(WebService::class.java)
 }

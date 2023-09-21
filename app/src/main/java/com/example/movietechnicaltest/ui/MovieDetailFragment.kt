@@ -21,7 +21,6 @@ class MovieDetailFragment : Fragment(R.layout.fragment_movie_detail) {
 
     private val args by navArgs<MovieDetailFragmentArgs>()
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
